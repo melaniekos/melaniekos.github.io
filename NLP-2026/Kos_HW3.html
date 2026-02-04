@@ -1736,14 +1736,20 @@ dates, places, times, lemmatization…</p>
   x &lt;- gsub(&quot;\\bMr\\.(?=\\W|$)&quot;, &quot;mister&quot;, x, perl = TRUE) # Mr., Mrs, Dr., etc fixes below
   x &lt;- gsub(&quot;\\bMrs\\.(?=\\W|$)&quot;, &quot;missus&quot;, x, perl = TRUE)
   x &lt;- gsub(&quot;\\bMs\\.(?=\\W|$)&quot;, &quot;miss&quot;, x, perl = TRUE)
-  x &lt;- gsub(&quot;\\bDr\\.(?=\\W|$)&quot;, &quot;doctor&quot;, x, perl = TRUE)
   x &lt;- gsub(&quot;\\bSr\\.(?=\\W|$)&quot;, &quot;senior&quot;, x, perl = TRUE)
   x &lt;- gsub(&quot;\\bJr\\.(?=\\W|$)&quot;, &quot;junior&quot;, x, perl = TRUE)
+  x &lt;- gsub(&quot;\\bSte\\.(?=\\W|$)&quot;, &quot;suite&quot;, x, perl = TRUE)
+  x &lt;- gsub(&quot;\\bCapt\\.(?=\\W|$)&quot;, &quot;captain&quot;, x, perl = TRUE)
+  x &lt;- gsub(&quot;\\bProf\\.(?=\\W|$)&quot;, &quot;professor&quot;, x, perl = TRUE)
+  x &lt;- gsub(&quot;\\bRev\\.(?=\\W|$)&quot;, &quot;reverend&quot;, x, perl = TRUE)
   x &lt;- gsub(&quot;&#39;s\\b&quot;, &quot;&quot;, x) # Remove singular and plural possessives 
   x &lt;- gsub(&quot;s&#39;\\b&quot;, &quot;s&quot;, x)
   x &lt;- gsub(&quot;\\b[IVXLCDM]+(?=[[:punct:]]|\\s|$)&quot;, &quot; &quot;, x, perl = TRUE) # Remove any roman numerals
   x &lt;- gsub(&quot;\\bSt\\.(?=\\s+[A-Z])&quot;, &quot;saint&quot;, x, perl = TRUE) # Saint (religious / place names), usually followed by capital letter for name
   x &lt;- gsub(&quot;\\bSt\\.(?=\\s*[a-z0-9]|\\W|$)&quot;, &quot;street&quot;, x, perl = TRUE) # Street (addresses), usually followed by non-capital letter or punctuation
+  x &lt;- gsub(&quot;\\bDr\\.(?=\\s+[A-Z])&quot;, &quot;doctor&quot;, x, perl = TRUE) # Doctor, usually followed by capital letter for name
+  x &lt;- gsub(&quot;\\bDr\\.(?=\\s*[a-z0-9]|\\W|$)&quot;, &quot;drive&quot;, x, perl = TRUE) # Drive (addresses), usually followed by non-capital letter or punctuation
+
   
   # Dashes / hyphens
   # # Merge words to retain meaning, even if spaces around dash
@@ -2196,14 +2202,14 @@ print(sherlock_clean, n = 200)</code></pre>
 ## 190 saint     saint      saint         69      69
 ## 191 seemed    seem       seem          69      69
 ## 192 cried     cry        cry           68      68
-## 193 doctor    doctor     doctor        68      68
-## 194 having    have       have          68      68
-## 195 head      head       head          68      68
-## 196 went      go         go            68      68
-## 197 done      do         do            67      67
-## 198 those     that       &lt;NA&gt;          67      NA
-## 199 while     while      &lt;NA&gt;          67      NA
-## 200 years     year       year          66      66
+## 193 having    have       have          68      68
+## 194 head      head       head          68      68
+## 195 went      go         go            68      68
+## 196 done      do         do            67      67
+## 197 those     that       &lt;NA&gt;          67      NA
+## 198 while     while      &lt;NA&gt;          67      NA
+## 199 years     year       year          66      66
+## 200 doctor    doctor     doctor        65      65
 ## # ℹ 7,864 more rows</code></pre>
 <div id="check-sherlock-output" class="section level2">
 <h2>Check Sherlock output</h2>
