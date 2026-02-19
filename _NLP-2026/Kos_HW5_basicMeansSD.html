@@ -1595,12 +1595,12 @@ name_genie</p>
                           strip_possessives = TRUE, # Amend singular and plural possessives
                           normalize_abbrev = TRUE, # Replace common abbreviations with full word
                           dash_mode = c(&quot;prefix_merge&quot;, &quot;split&quot;, &quot;remove&quot;), 
-  # Prefix_merge = merge common list of common prefixes on hyphen (ie re-do becomes redo, well-being becomes well being) 
-  # Split = all hyphens become spaces (ie re-do becomes re do, well-being becomes well being) 
-  # Remove = all hyphens are removed (ie re-do becomes redo, well-being becomes wellbeing) 
+                          # Prefix_merge = merge common list of common prefixes on hyphen (ie re-do becomes redo, well-being becomes well being) 
+                          # Split = all hyphens become spaces (ie re-do becomes re do, well-being becomes well being) 
+                          # Remove = all hyphens are removed (ie re-do becomes redo, well-being becomes wellbeing) 
                           return_base_text = FALSE) # Return the fully cleaned base text along with two df outputs
 
-  {
+{
   
   dash_mode &lt;- match.arg(dash_mode)
   
@@ -1623,7 +1623,7 @@ name_genie</p>
     tryCatch(stringi::stri_enc_toutf8(as.character(x), is_unknown_8bit = TRUE, validate = TRUE),
              error = function(e)
                stringi::stri_encode(as.character(x), to = &quot;UTF-8&quot;))
-    }
+  }
   
   # Remove any new lines, tabs, returns, etc. 
   strip_control_characters &lt;- function(x) {
@@ -1677,28 +1677,28 @@ name_genie</p>
   
   # Remove roman numerals for chapters, etc. AND other numerals anywhere else (toggle on/off)
   remove_roman_module &lt;- function(x) {
-  # Remove chapter, section numerals
-  x &lt;- gsub(&quot;\\b(?i:(chapter|section|act|book|part))\\s+(?i:[ivxlcdm]+)(st|nd|rd|th)?(?=[[:punct:]]|\\s|$)&quot;, &quot;&quot;, x, perl = TRUE)
-  
-  # Remove any remaining Roman numerals anywhere in text
-  x &lt;- gsub(&quot;\\b(?i:[ivxlcdm]+)(st|nd|rd|th)?\\b&quot;, &quot;&quot;, x,perl = TRUE)
-  x
+    # Remove chapter, section numerals
+    x &lt;- gsub(&quot;\\b(?i:(chapter|section|act|book|part))\\s+(?i:[ivxlcdm]+)(st|nd|rd|th)?(?=[[:punct:]]|\\s|$)&quot;, &quot;&quot;, x, perl = TRUE)
+    
+    # Remove any remaining Roman numerals anywhere in text
+    x &lt;- gsub(&quot;\\b(?i:[ivxlcdm]+)(st|nd|rd|th)?\\b&quot;, &quot;&quot;, x,perl = TRUE)
+    x
   }
   
   # Remove all numeric numbers and suffix for written numbers (toggle on/off)
   remove_numbers_module &lt;- function(x) {
-  x &lt;- gsub(&quot;\\b(\\d+)(st|nd|rd|th)\\b&quot;, &quot;\\1&quot;, x, perl = TRUE)
-  x &lt;- gsub(&quot;[[:digit:]]&quot;, &quot;&quot;, x)
-  x
-}
-
+    x &lt;- gsub(&quot;\\b(\\d+)(st|nd|rd|th)\\b&quot;, &quot;\\1&quot;, x, perl = TRUE)
+    x &lt;- gsub(&quot;[[:digit:]]&quot;, &quot;&quot;, x)
+    x
+  }
+  
   
   # Remove all written out numbers (toggle on/off)
   remove_number_words_module &lt;- function(words) {
     number_stems &lt;- &quot;\\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion)\\b&quot;
-  ifelse(str_detect(words, number_stems), NA_character_, words)
-}
-
+    ifelse(str_detect(words, number_stems), NA_character_, words)
+  }
+  
   
   # Hyphen/dash module, 3 potential modes (also defined above): 
   # Prefix_merge = merge common list of common prefixes on hyphen (ie re-do becomes redo, well-being becomes well being) 
@@ -1764,20 +1764,20 @@ name_genie</p>
   
   # String-level lemmatization BEFORE tokenization
   if (lemmatize) {
-   x &lt;- lemmatize_module(x)}
-
+    x &lt;- lemmatize_module(x)}
+  
   # Preserve row identity in original text (from Jamie&#39;s)
   df_base &lt;- tibble(id_row_orig = seq_along(x), text = x)
   
   # Tokenization
   token_df &lt;- df_base |&gt;
-  unnest_tokens(word_raw, text) |&gt;
-  mutate(word_lemma = word_raw)
+    unnest_tokens(word_raw, text) |&gt;
+    mutate(word_lemma = word_raw)
   
   # Remove number words
   if (remove_number_words) {
-  token_df &lt;- token_df |&gt;
-    mutate(word_lemma = remove_number_words_module(word_lemma))}
+    token_df &lt;- token_df |&gt;
+      mutate(word_lemma = remove_number_words_module(word_lemma))}
   
   
   # Stopword toggle
@@ -1795,7 +1795,7 @@ name_genie</p>
   # Counts
   token_df &lt;- token_df |&gt;
     mutate(word_lemma = ifelse(str_detect(word_lemma, &quot;\\d&quot;), NA_character_, word_lemma), # Make sure digits are removed
-    word_clean = ifelse(str_detect(word_clean, &quot;\\d&quot;), NA_character_, word_clean)) |&gt;
+           word_clean = ifelse(str_detect(word_clean, &quot;\\d&quot;), NA_character_, word_clean)) |&gt;
     group_by(word_raw) |&gt;
     mutate(n_raw = n()) |&gt;
     ungroup() |&gt;
@@ -1804,19 +1804,21 @@ name_genie</p>
     ungroup()
   
   type_df &lt;- token_df |&gt;
-    count(id_row_orig, word_raw, word_lemma, word_clean, name = &quot;n_raw&quot;) |&gt;
-    left_join(token_df |&gt;
-        filter(!is.na(word_clean)) |&gt;
-        count(id_row_orig, word_raw, name = &quot;n_clean&quot;),
-        by = c(&quot;id_row_orig&quot;, &quot;word_raw&quot;))
-  
+    dplyr::count(word_raw, word_lemma, word_clean, name = &quot;n_raw&quot;, sort = TRUE) |&gt;
+    dplyr::left_join(
+      token_df |&gt;
+        dplyr::filter(!is.na(word_clean)) |&gt;
+        dplyr::count(word_raw, name = &quot;n_clean&quot;),
+      by = &quot;word_raw&quot;)
+
+
   # Return base text (fully cleaned string-level text) (toggle on/off)
   if (return_base_text) {
-  list(base_text = x, token_df = token_df, type_df = type_df)
-} else {
-  list(token_df = token_df, type_df  = type_df)
-}
-
+    list(base_text = x, token_df = token_df, type_df = type_df)
+  } else {
+    list(token_df = token_df, type_df  = type_df)
+  }
+  
 }</code></pre>
 </div>
 <div id="summarize-corpus-with-new-clean-data" class="section level1">
@@ -1912,20 +1914,20 @@ unabomb_base[1:50]</code></pre>
 ## 10           5 and          and          &lt;NA&gt;           742      NA
 ## # ℹ 34,343 more rows</code></pre>
 <pre class="r"><code>unabomb_typedf</code></pre>
-<pre><code>## # A tibble: 32,323 × 6
-##    id_row_orig word_raw     word_lemma   word_clean   n_raw n_clean
-##          &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;        &lt;int&gt;   &lt;int&gt;
-##  1           1 and          and          &lt;NA&gt;             1      NA
-##  2           1 future       future       future           1       1
-##  3           1 industrial   industrial   industrial       1       1
-##  4           1 its          its          &lt;NA&gt;             1      NA
-##  5           1 society      society      society          1       1
-##  6           3 introduction introduction introduction     1       1
-##  7           5 a            a            &lt;NA&gt;             1      NA
-##  8           5 and          and          &lt;NA&gt;             1      NA
-##  9           5 be           be           &lt;NA&gt;             1      NA
-## 10           5 consequence  consequence  consequence      1       1
-## # ℹ 32,313 more rows</code></pre>
+<pre><code>## # A tibble: 3,066 × 5
+##    word_raw word_lemma word_clean n_raw n_clean
+##    &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;      &lt;int&gt;   &lt;int&gt;
+##  1 the      the        &lt;NA&gt;        1892      NA
+##  2 be       be         &lt;NA&gt;        1514      NA
+##  3 of       of         &lt;NA&gt;        1265      NA
+##  4 to       to         &lt;NA&gt;        1101      NA
+##  5 a        a          &lt;NA&gt;         898      NA
+##  6 and      and        &lt;NA&gt;         742      NA
+##  7 that     that       &lt;NA&gt;         730      NA
+##  8 in       in         &lt;NA&gt;         624      NA
+##  9 have     have       have         437     437
+## 10 it       it         &lt;NA&gt;         411      NA
+## # ℹ 3,056 more rows</code></pre>
 <p>Yay, cleaned Unabomber data! Now, let’s load the metadata set and
 create a new dataframe with it to characterize the Unabomber text. I’ll
 use the token dataframe output (which preserves naturally preserves the
